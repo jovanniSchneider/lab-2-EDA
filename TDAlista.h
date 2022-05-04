@@ -32,19 +32,19 @@ int esListaVacia(TDAlista* lista)
     return 0;
 }
 
-void recorrerLista(TDAlista* lista, void (*f)(nodo*,char*))
+void recorrerLista(TDAlista* lista, void (*f)(nodo*,char*),char * string)
 {
   if (!esListaVacia(lista))
   {
     nodo* auxiliar=lista->inicio;
     while (auxiliar!=NULL)
     {
-      (*f)(auxiliar,"Nodo:");
+      (*f)(auxiliar,string);
       auxiliar=auxiliar->siguiente;
     }
   }
   else
-    printf("La lista está vacía\n");
+    printf("La lista esta vacia\n");
 }
 
 void insertarInicio(TDAlista* lista, int * dato)
@@ -64,6 +64,7 @@ void eliminarInicio(TDAlista* lista)
   {
     auxiliar=lista->inicio;
     lista->inicio=lista->inicio->siguiente;
+    free(auxiliar->dato);
     free(auxiliar);
   }
 }
@@ -87,12 +88,13 @@ void liberarLista(TDAlista * lista){
 void eliminarDato(TDAlista * lista, int * dato){
 	nodo * auxiliar = lista->inicio;
 	nodo * siguiente = auxiliar->siguiente;
-	while (siguiente->siguiente != NULL)
+	while (siguiente != NULL)
 	{
 		if (siguiente->dato[0] == dato[0] && siguiente->dato[1] == dato[1])
 		{
 			auxiliar->siguiente = siguiente->siguiente;
-			free(siguiente);
+      free(siguiente->dato);
+			//free(siguiente);
 			break;
 		}
 		auxiliar = siguiente;

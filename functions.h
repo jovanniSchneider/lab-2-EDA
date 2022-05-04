@@ -45,55 +45,102 @@ void separarRangos(nodo *node, TDAlista *lista)
     if (!esListaVacia(lista))
     {
         nodo *auxiliar = lista->inicio;
-        int *datoAux = (int *)malloc(sizeof(int) * 2);
+        int *rango = (int *)malloc(sizeof(int) * 2);
+        int a, b, c, d;
+        int caso;
+        a = node->dato[0];
+        b = node->dato[1];
         while (auxiliar != NULL)
         {
-            recorrerLista(lista, imprimirNodo);
-            if (node->dato[0] == auxiliar->dato[0] && node->dato[1] == auxiliar->dato[1])
+            caso = 0;
+            c = auxiliar->dato[0];
+            d = auxiliar->dato[1];
+
+            printf("[%d,%d]\n", auxiliar->dato[0], auxiliar->dato[1]);
+            if (a < c)
             {
-                printf("1 condicion\n");
-                eliminarDato(lista, auxiliar->dato);
-                break;
-            }else if (node->dato[0] < auxiliar->dato[0] && node->dato[1] == auxiliar->dato[1])
-            {
-                if(auxiliar->dato[0] - node->dato[0] <= 14){
-                    eliminarDato(lista, auxiliar->dato);
+                if (c - a < 14)
+                {
+                    if (b < d && b > c)
+                    {
+                        rango[0] = b;
+                        rango[1] = d;
+                        caso = 1;
+                    }
+                    else if (b >= d && b - d < 14)
+                    {
+                        caso = 2;
+                    }
                 }
             }
-            
-            else if (node->dato[0] > auxiliar->dato[0] && node->dato[1] == auxiliar->dato[1])
+            else if (a == c)
             {
-                printf("2 condicion\n");
-                eliminarDato(lista, auxiliar->dato);
-                datoAux[0] = auxiliar->dato[0];
-                datoAux[1] = node->dato[0];
-                insertarInicio(lista, datoAux);
-                break;
+                if (b < d)
+                {
+                    rango[0] = b;
+                    rango[1] = d;
+                    caso = 1;
+                }
+                else if (b >= d && b - d < 14)
+                {
+                    caso = 2;
+                }
             }
-            else if (node->dato[0] == auxiliar->dato[0] && node->dato[1] < auxiliar->dato[1])
+            else if (a > c)
             {
-                printf("3 condicion\n");
-                eliminarDato(lista, auxiliar->dato);
-                datoAux[0] = node->dato[1];
-                datoAux[1] = auxiliar->dato[1];
-                insertarInicio(lista, datoAux);
-                break;
+                if (b < d)
+                {
+                    caso = 3;
+                }
+                else if (b >= d && b - d < 14 && a < d)
+                {
+                    rango[0] = c;
+                    rango[1] = a;
+                    caso = 1;
+                }
             }
-            else if (node->dato[0] > auxiliar->dato[0] && node->dato[1] < auxiliar->dato[1])
+
+            switch (caso)
             {
-                printf("4 condicion\n");
-                eliminarDato(lista, auxiliar->dato);
-                datoAux[0] = auxiliar->dato[0];
-                datoAux[1] = node->dato[0];
-                insertarInicio(lista, datoAux);
-                datoAux[0] = node->dato[1];
-                datoAux[1] = auxiliar->dato[1];
-                insertarInicio(lista, datoAux);
+            case 1:
+                insertarInicio(lista, rango);
+                printf("cubrir [%d,%d]\n", rango[0], rango[1]);
+
+                printf("Eliminar [%d,%d]\n", auxiliar->dato[0], auxiliar->dato[1]);
+                rango[0] = c;
+                rango[1] = d;
+                eliminarDato(lista, rango);
+
+                break;
+
+            case 2:
+                printf("Eliminar [%d,%d]\n", auxiliar->dato[0], auxiliar->dato[1]);
+                printf("Eliminar [%d,%d]\n", auxiliar->dato[0], auxiliar->dato[1]);
+                rango[0] = c;
+                rango[1] = d;
+                eliminarDato(lista, rango);
+
+                break;
+            case 3:
+                rango[0] = c;
+                rango[1] = a;
+                insertarInicio(lista, rango);
+                printf("cubrir [%d,%d]\n", rango[0], rango[1]);
+
+                rango[0] = b;
+                rango[1] = d;
+                insertarInicio(lista, rango);
+                printf("cubrir [%d,%d]\n", rango[0], rango[1]);
+
+                printf("Eliminar [%d,%d]\n", auxiliar->dato[0], auxiliar->dato[1]);
+                rango[0] = c;
+                rango[1] = d;
+                eliminarDato(lista, rango);
+
                 break;
             }
             auxiliar = auxiliar->siguiente;
         }
-        free(datoAux);
     }
 }
 
@@ -105,10 +152,17 @@ void calcularContratos(TDAlista *lista, TDAlista *horarios)
         while (auxiliar != NULL)
         {
             printf("Viendo rango = [%d , %d]\n", auxiliar->dato[0], auxiliar->dato[1]);
+            printf("Lista de entrada\n");
             separarRangos(auxiliar, horarios);
             auxiliar = auxiliar->siguiente;
         }
     }
     else
-        printf("La lista está vacía\n");
+        printf("La lista esta vacia\n");
+}
+
+void escribirNodo(nodo *node, char *direccionArchivo)
+{
+    FILE *archivo = (FILE *)(atoi(direccionArchivo));
+    fprintf(archivo, "%d %d\n", node->dato[0], node->dato[1]);
 }

@@ -15,7 +15,14 @@ int main()
   dato[1] = 308;
   
   printf("calculado\n");
-  recorrerLista(horarios,imprimirNodo);
+  recorrerLista(horarios,imprimirNodo,"Nodo: ");
+  FILE * archivo = fopen("salida.out","w");
+  char * direccionArchivo;
+  int direccionArchivoInt = (int)archivo;
+  sprintf(direccionArchivo,"%d",direccionArchivoInt);
+  printf("Direccion de archivo: %s\n",direccionArchivo);
+  recorrerLista(horarios,escribirNodo,direccionArchivo);
+  fclose(archivo);
   liberarLista(lista);
   liberarLista(horarios);
   free(dato);
